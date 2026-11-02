@@ -41,10 +41,15 @@ User-entered income and expense records are stored locally using SharedPreferenc
 2. Punna Saideep
 
 ## 8. Screenshots
-Add screenshots of:
-- Dashboard
-- Add Income / Add Expense
-- Reports / Summary
+
+### Dashboard
+![Dashboard](screenshots/dashboard.jpg)
+
+### Add Income / Add Expense
+![Add Transaction](screenshots/add_transaction.jpg)
+
+### Reports / Summary
+![Reports](screenshots/reports.jpg)
 
 ## 9. Testing
 - Flutter widget test passed.
