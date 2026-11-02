@@ -1,17 +1,59 @@
-# expense_traker
+# Expence Tracker
 
-Expense Tracker Application
+## 1. Project Title
+**Expence Tracker – Personal Income and Expense Management App**
 
-## Getting Started
+## 2. Description
+Expence Tracker is a Flutter-based Android application that helps users manage their personal income and expenses. Users can record transactions, view spending summaries and calculate their remaining balance.
 
-This project is a starting point for a Flutter application.
+## 3. Features
+- Add income with amount, source, date and note.
+- Add expenses with amount, category, date and note.
+- View total income.
+- View total expenses.
+- Calculate remaining balance.
+- View recent expenses.
+- View category-wise expense summary.
+- View transaction details.
+- Local data storage.
+- Dark theme.
+- Bottom navigation.
 
-A few resources to get you started if this is your first Flutter project:
+## 4. Technologies Used
+- Flutter
+- Dart
+- Provider
+- SharedPreferences
+- Android Studio
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## 5. Data Source
+User-entered income and expense records are stored locally using SharedPreferences.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 6. Installation and Execution
+1. Clone this GitHub repository.
+2. Open the project in Android Studio.
+3. Run `flutter pub get`.
+4. Connect an Android device or start an emulator.
+5. Run `flutter run`.
+
+## 7. Team Members
+1. Shaik Abdul Althaf
+2. Punna Saideep
+
+## 8. Screenshots
+Add screenshots of:
+- Dashboard
+- Add Income / Add Expense
+- Reports / Summary
+
+## 9. Testing
+- Flutter widget test passed.
+- Release APK generated successfully.
+- Physical Android device installation tested.
+- Local data persistence tested.
+
+## 10. APK Location
+`build/app/outputs/flutter-apk/app-release.apk`
+
+## 11. Project Repository
+https://github.com/248x1a42d8/Expense_Tracker
