@@ -5,11 +5,15 @@ import '../models/expense.dart';
 class ExpenseCard extends StatelessWidget {
   final Expense expense;
   final VoidCallback? onTap;
+  final VoidCallback? onDelete;
+  final VoidCallback? onEdit;
 
   const ExpenseCard({
     super.key,
     required this.expense,
     this.onTap,
+    this.onDelete,
+    this.onEdit,
   });
 
   @override
@@ -35,11 +39,24 @@ class ExpenseCard extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        trailing: Text(
-          '₹${expense.amount.toStringAsFixed(2)}',
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '₹${expense.amount.toStringAsFixed(2)}',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.edit, color: Colors.blue),
+              onPressed: onEdit,
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: onDelete,
+            ),
+          ],
         ),
       ),
     );

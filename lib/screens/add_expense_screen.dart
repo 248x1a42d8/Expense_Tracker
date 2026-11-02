@@ -6,7 +6,12 @@ import '../models/expense.dart';
 import '../providers/expense_provider.dart';
 
 class AddExpenseScreen extends StatefulWidget {
-  const AddExpenseScreen({super.key});
+  final Expense? expense;
+
+  const AddExpenseScreen({
+    super.key,
+    this.expense,
+  });
 
   @override
   State<AddExpenseScreen> createState() => _AddExpenseScreenState();
@@ -29,6 +34,21 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     'Bills',
     'Other',
   ];
+
+  bool get _isEditing => widget.expense != null;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.expense != null) {
+      _amountController.text =
+          widget.expense!.amount.toString();
+      _noteController.text = widget.expense!.note;
+      _selectedCategory = widget.expense!.category;
+      _selectedDate = widget.expense!.date;
+    }
+  }
 
   @override
   void dispose() {
@@ -57,7 +77,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
     if (_selectedCategory == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a category')),
+        const SnackBar(
+          content: Text('Please select a category'),
+        ),
       );
       return;
     }
@@ -66,19 +88,32 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
     try {
       final expense = Expense(
-        id: DateTime.now().microsecondsSinceEpoch.toString(),
+        id: widget.expense?.id ??
+            DateTime.now().microsecondsSinceEpoch.toString(),
         amount: double.parse(_amountController.text.trim()),
         category: _selectedCategory!,
         date: _selectedDate,
         note: _noteController.text.trim(),
       );
 
-      await context.read<ExpenseProvider>().addExpense(expense);
+      final provider = context.read<ExpenseProvider>();
+
+      if (_isEditing) {
+        await provider.updateExpense(expense);
+      } else {
+        await provider.addExpense(expense);
+      }
 
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Expense added successfully')),
+        SnackBar(
+          content: Text(
+            _isEditing
+                ? 'Expense updated successfully'
+                : 'Expense added successfully',
+          ),
+        ),
       );
 
       Navigator.pop(context);
@@ -86,7 +121,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Unable to save expense. Try again.')),
+        const SnackBar(
+          content: Text('Unable to save expense. Try again.'),
+        ),
       );
     } finally {
       if (mounted) {
@@ -99,7 +136,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Expense'),
+        title: Text(
+          _isEditing ? 'Edit Expense' : 'Add Expense',
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -118,9 +157,12 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   prefixIcon: Icon(Icons.currency_rupee),
                 ),
                 validator: (value) {
-                  final amount = double.tryParse(value?.trim() ?? '');
+                  final amount =
+                  double.tryParse(value?.trim() ?? '');
 
-                  if (amount == null || !amount.isFinite || amount <= 0) {
+                  if (amount == null ||
+                      !amount.isFinite ||
+                      amount <= 0) {
                     return 'Enter a valid amount greater than zero';
                   }
 
@@ -129,7 +171,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               ),
               const SizedBox(height: 20),
               DropdownButtonFormField<String>(
-                value: _selectedCategory,
+                initialValue: _selectedCategory,
                 decoration: const InputDecoration(
                   labelText: 'Category',
                   prefixIcon: Icon(Icons.category),
@@ -146,7 +188,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   });
                 },
                 validator: (value) {
-                  if (value == null) return 'Please select a category';
+                  if (value == null) {
+                    return 'Please select a category';
+                  }
                   return null;
                 },
               ),
@@ -177,7 +221,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   if (value == null || value.trim().isEmpty) {
                     return 'Please enter a note';
                   }
-
                   return null;
                 },
               ),
@@ -186,7 +229,11 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 onPressed: _isSaving ? null : _saveExpense,
                 child: _isSaving
                     ? const CircularProgressIndicator()
-                    : const Text('Save Expense'),
+                    : Text(
+                  _isEditing
+                      ? 'Update Expense'
+                      : 'Save Expense',
+                ),
               ),
             ],
           ),

@@ -76,6 +76,59 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     });
   }
 
+  Future<void> _confirmDeleteExpense(
+      BuildContext context,
+      ExpenseProvider provider,
+      String expenseId,
+      ) async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Delete Expense?'),
+          content: const Text(
+            'Are you sure you want to delete this expense?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text(
+                'Delete',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldDelete == true && context.mounted) {
+      try {
+        await provider.deleteExpense(expenseId);
+
+        if (!context.mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Expense deleted successfully'),
+          ),
+        );
+      } catch (e) {
+        if (!context.mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Unable to delete expense. Please try again.'),
+          ),
+        );
+      }
+    }
+  }
+
   void _showAddOptions() {
     showModalBottomSheet(
       context: context,
@@ -85,7 +138,10 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
           child: Wrap(
             children: [
               ListTile(
-                leading: const Icon(Icons.add_circle, color: Colors.greenAccent),
+                leading: const Icon(
+                  Icons.add_circle,
+                  color: Colors.greenAccent,
+                ),
                 title: const Text('Add Income'),
                 onTap: () {
                   Navigator.pop(sheetContext);
@@ -93,7 +149,10 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.remove_circle, color: Colors.redAccent),
+                leading: const Icon(
+                  Icons.remove_circle,
+                  color: Colors.redAccent,
+                ),
                 title: const Text('Add Expense'),
                 onTap: () {
                   Navigator.pop(sheetContext);
@@ -142,7 +201,9 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
             icon: const Icon(Icons.notifications_none),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('No new notifications')),
+                const SnackBar(
+                  content: Text('No new notifications'),
+                ),
               );
             },
           ),
@@ -151,15 +212,19 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
       body: Consumer2<ExpenseProvider, IncomeProvider>(
         builder: (context, expenseProvider, incomeProvider, child) {
           final expenses = expenseProvider.expenses;
+
           final totalExpenses = expenses.fold<double>(
             0,
                 (sum, expense) => sum + expense.amount,
           );
+
           final totalIncome = incomeProvider.totalIncome;
           final balance = totalIncome - totalExpenses;
 
           if (expenseProvider.isLoading || incomeProvider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
 
           if (expenseProvider.errorMessage != null ||
@@ -188,7 +253,10 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
               children: [
                 const Text(
                   'Dashboard',
-                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Row(
@@ -228,7 +296,10 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                   children: [
                     const Text(
                       'Recent Expenses',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     TextButton(
                       onPressed: () => _openPage(const SummaryScreen()),
@@ -254,6 +325,14 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                       onTap: () => _openPage(
                         DetailScreen(expense: expense),
                       ),
+                      onDelete: () => _confirmDeleteExpense(
+                        context,
+                        expenseProvider,
+                        expense.id,
+                      ),
+                      onEdit: () => _openPage(
+                        AddExpenseScreen(expense: expense),
+                      ),
                     ),
                   ),
               ],
@@ -269,10 +348,22 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
         selectedItemColor: Colors.deepPurpleAccent,
         unselectedItemColor: Colors.grey,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Reports'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_circle_outline), label: 'Add'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings_outlined), label: 'Settings'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bar_chart),
+            label: 'Reports',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_circle_outline),
+            label: 'Add',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings_outlined),
+            label: 'Settings',
+          ),
         ],
       ),
     );

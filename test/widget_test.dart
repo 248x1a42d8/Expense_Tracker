@@ -3,9 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../lib/main.dart';
-import '../lib/providers/expense_provider.dart';
-import '../lib/providers/income_provider.dart';
+import 'package:expense_traker/main.dart';
+import 'package:expense_traker/providers/expense_provider.dart';
+import 'package:expense_traker/providers/income_provider.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

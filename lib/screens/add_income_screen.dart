@@ -6,7 +6,12 @@ import '../models/income.dart';
 import '../providers/income_provider.dart';
 
 class AddIncomeScreen extends StatefulWidget {
-  const AddIncomeScreen({super.key});
+  final Income? income;
+
+  const AddIncomeScreen({
+    super.key,
+    this.income,
+  });
 
   @override
   State<AddIncomeScreen> createState() => _AddIncomeScreenState();
@@ -28,6 +33,21 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
     'Pocket Money',
     'Other',
   ];
+
+  bool get _isEditing => widget.income != null;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.income != null) {
+      _amountController.text =
+          widget.income!.amount.toString();
+      _noteController.text = widget.income!.note;
+      _selectedSource = widget.income!.source;
+      _selectedDate = widget.income!.date;
+    }
+  }
 
   @override
   void dispose() {
@@ -56,19 +76,32 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
 
     try {
       final income = Income(
-        id: DateTime.now().microsecondsSinceEpoch.toString(),
+        id: widget.income?.id ??
+            DateTime.now().microsecondsSinceEpoch.toString(),
         amount: double.parse(_amountController.text.trim()),
         source: _selectedSource!,
         date: _selectedDate,
         note: _noteController.text.trim(),
       );
 
-      await context.read<IncomeProvider>().addIncome(income);
+      final provider = context.read<IncomeProvider>();
+
+      if (_isEditing) {
+        await provider.updateIncome(income);
+      } else {
+        await provider.addIncome(income);
+      }
 
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Income added successfully')),
+        SnackBar(
+          content: Text(
+            _isEditing
+                ? 'Income updated successfully'
+                : 'Income added successfully',
+          ),
+        ),
       );
 
       Navigator.pop(context);
@@ -76,7 +109,9 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Unable to save income')),
+        const SnackBar(
+          content: Text('Unable to save income. Please try again.'),
+        ),
       );
     } finally {
       if (mounted) {
@@ -87,8 +122,11 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Income')),
+      appBar: AppBar(
+        title: Text(_isEditing ? 'Edit Income' : 'Add Income'),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Form(
@@ -105,7 +143,8 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
                   prefixIcon: Icon(Icons.currency_rupee),
                 ),
                 validator: (value) {
-                  final amount = double.tryParse(value?.trim() ?? '');
+                  final amount =
+                  double.tryParse(value?.trim() ?? '');
 
                   if (amount == null ||
                       !amount.isFinite ||
@@ -117,7 +156,7 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
               ),
               const SizedBox(height: 20),
               DropdownButtonFormField<String>(
-                value: _selectedSource,
+                initialValue: _selectedSource,
                 decoration: const InputDecoration(
                   labelText: 'Income Source',
                   prefixIcon: Icon(Icons.category),
@@ -169,7 +208,9 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
                   onPressed: _isSaving ? null : _saveIncome,
                   child: _isSaving
                       ? const CircularProgressIndicator()
-                      : const Text('Save Income'),
+                      : Text(
+                    _isEditing ? 'Update Income' : 'Save Income',
+                  ),
                 ),
               ),
             ],

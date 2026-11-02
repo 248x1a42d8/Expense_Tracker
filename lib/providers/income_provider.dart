@@ -45,6 +45,19 @@ class IncomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateIncome(Income updatedIncome) async {
+    final updatedIncomes = _incomes.map((income) {
+      return income.id == updatedIncome.id
+          ? updatedIncome
+          : income;
+    }).toList();
+
+    await _service.saveIncomes(updatedIncomes);
+
+    _incomes = updatedIncomes;
+    notifyListeners();
+  }
+
   Future<void> deleteIncome(String id) async {
     final updatedIncomes =
     _incomes.where((income) => income.id != id).toList();

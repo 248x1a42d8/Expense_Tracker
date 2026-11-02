@@ -38,6 +38,19 @@ class ExpenseProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateExpense(Expense updatedExpense) async {
+    final updatedExpenses = _expenses.map((expense) {
+      return expense.id == updatedExpense.id
+          ? updatedExpense
+          : expense;
+    }).toList();
+
+    await _service.saveExpenses(updatedExpenses);
+
+    _expenses = updatedExpenses;
+    notifyListeners();
+  }
+
   Future<void> deleteExpense(String id) async {
     final updatedExpenses =
     _expenses.where((expense) => expense.id != id).toList();
