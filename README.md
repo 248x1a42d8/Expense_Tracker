@@ -47,7 +47,7 @@ User-entered income and expense records are stored locally using SharedPreferenc
 ![Dashboard](screenshots/dashboard.jpg.jpeg)
 
 ### Add Transaction
-![Add Transaction](screenshots/add_transaction.jpeg)
+![Add Transaction](screenshots/add_transaction.jpg.jpeg)
 
 ### Reports
 ![Reports](screenshots/reports.jpg.jpeg)
