@@ -41,16 +41,16 @@ User-entered income and expense records are stored locally using SharedPreferenc
 2. Punna Saideep
 
 ## 8. Screenshots
+## Screenshots
 
 ### Dashboard
-![Dashboard](screenshots/dashboard.jpg)
+![Dashboard](screenshots/dashboard.jpg.jpeg)
 
-### Add Income / Add Expense
-![Add Transaction](screenshots/add_transaction.jpg)
+### Add Transaction
+![Add Transaction](screenshots/add_transaction.jpeg)
 
-### Reports / Summary
-![Reports](screenshots/reports.jpg)
-
+### Reports
+![Reports](screenshots/reports.jpg.jpeg)
 ## 9. Testing
 - Flutter widget test passed.
 - Release APK generated successfully.
@@ -61,4 +61,4 @@ User-entered income and expense records are stored locally using SharedPreferenc
 `build/app/outputs/flutter-apk/app-release.apk`
 
 ## 11. Project Repository
-https://github.com/248x1a42d8/Expense_Tracker
+https://github.com/248x1a42d8/Expense_Tracker/releases/latest
